@@ -1,0 +1,654 @@
+import { useState } from "react";
+
+const COLORS = {
+  bg: "#0d1117",
+  card: "#161b22",
+  cardBorder: "#21262d",
+  accent: "#e94560",
+  blue: "#2980b9",
+  green: "#27ae60",
+  orange: "#e67e22",
+  purple: "#8b5cf6",
+  text: "#e6edf3",
+  muted: "#8b949e",
+  subtle: "#21262d",
+};
+
+const data = {
+  partA: {
+    id: "A",
+    label: "PARTIE A",
+    title: "Mobilité Douce",
+    subtitle: "5–8 min · Avant chaque séance ou le matin",
+    color: COLORS.blue,
+    icon: "🔵",
+    tip: "Accessible même sans souplesse. Aucune douleur ne doit apparaître. Le World's Greatest Stretch est l'exercice le plus rentable du programme.",
+    exercises: [
+      {
+        name: "Cat-Cow à 4 pattes",
+        volume: "2 × 10 reps",
+        execution: "Lent, 2s dans chaque position",
+        why: "Mobilise toute la colonne, débloque les facettes lombaires",
+        video: "https://www.youtube.com/results?search_query=cat+cow+exercise+tutorial+dos",
+      },
+      {
+        name: "Rotation thoracique allongé",
+        volume: "2 × 8 / côté",
+        execution: "Expire en tournant, genoux empilés",
+        why: "Libère exactement la zone douloureuse côté gauche",
+        video: "https://www.youtube.com/results?search_query=thoracic+rotation+allonge+dos",
+      },
+      {
+        name: "Étirement piriforme allongé",
+        volume: "2 × 30s / côté",
+        execution: "Croix de cheville sur genou, tire vers toi",
+        why: "Prévient la compression du nerf sciatique",
+        video: "https://www.youtube.com/results?search_query=etirement+piriforme+sciatique",
+      },
+      {
+        name: "Hip 90/90 au sol",
+        volume: "2 × 30s / côté",
+        execution: "Dos droit, ne te penche pas en avant",
+        why: "Ouvre les hanches, réduit la tension sur les lombaires",
+        video: "https://www.youtube.com/results?search_query=hip+90+90+stretch+mobilite+hanches",
+      },
+      {
+        name: "Dead Bug lent (mobilité)",
+        volume: "2 × 6 / côté",
+        execution: "Dos collé au sol, expire à chaque extension",
+        why: "Active le transverse, stabilise avant l'effort",
+        video: "https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial+lombaires",
+      },
+      {
+        name: "World's Greatest Stretch",
+        volume: "1 × 5 / côté",
+        execution: "Enchaîne fente + rotation + ouverture de hanche",
+        why: "Hanches + thoracique + ischios en un seul mouvement",
+        video: "https://www.youtube.com/results?search_query=world+greatest+stretch+tutorial",
+      },
+    ],
+  },
+  partB: {
+    id: "B",
+    label: "PARTIE B",
+    title: "Renforcement dans les Amplitudes",
+    subtitle: "10–12 min · 2 à 3 fois / semaine",
+    color: COLORS.green,
+    icon: "🟢",
+    tip: "L'objectif : renforcer les muscles dans les positions où tu es le plus vulnérable. Élastiques et kettlebells suffisent pour tout.",
+    sections: [
+      {
+        title: "Gainage Profond",
+        desc: "Sans charge, sans risque — le socle de ta protection lombaire",
+        color: COLORS.green,
+        exercises: [
+          {
+            name: "Dead Bug",
+            volume: "3 × 8 / côté",
+            rir: "RIR 2",
+            execution: "Dos collé au sol, expire en allongeant",
+            why: "Multifides + transverse · Antisciatique n°1",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=dead+bug+exercise+gainage+profond",
+          },
+          {
+            name: "Bird Dog",
+            volume: "3 × 8 / côté",
+            rir: "RIR 2",
+            execution: "Lent, hanche neutre, ne laisse pas tomber la hanche",
+            why: "Coordination lombaire, mimétique du cordiste",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=bird+dog+exercise+dos+lombaires",
+          },
+          {
+            name: "Planche avant-bras",
+            volume: "3 × 20–30s",
+            rir: "RIR 1-2",
+            execution: "Bassin neutre, respire normalement",
+            why: "Gainage global sans compression discale",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=planche+avant+bras+tutorial+form",
+          },
+          {
+            name: "Planche latérale genoux",
+            volume: "2 × 20s / côté",
+            rir: "RIR 2",
+            execution: "Hanche vers le plafond, corps aligné",
+            why: "Carré des lombes — la zone qui a lâché chez toi",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=planche+laterale+genou+carre+des+lombes",
+          },
+        ],
+      },
+      {
+        title: "Ischio-jambiers en Amplitude",
+        desc: "Tes ischios raides tirent sur ton bas du dos au RDL — voilà la solution",
+        color: COLORS.orange,
+        exercises: [
+          {
+            name: "Nordic Curl élastique",
+            volume: "3 × 5–8",
+            rir: "RIR 2",
+            execution: "Descente lente 4s, élastique aide au retour",
+            why: "Renforce les ischios dans la position la plus vulnérable",
+            material: "Élastique fixé haut (porte, rack)",
+            video: "https://www.youtube.com/results?search_query=nordic+curl+elastique+tutorial",
+          },
+          {
+            name: "Pont fessier 1 jambe",
+            volume: "3 × 10 / jambe",
+            rir: "RIR 2",
+            execution: "Descente lente 3s, hanche haute en position haute",
+            why: "Ischio + fessier en amplitude, sans charge lombaire",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=single+leg+glute+bridge+tutorial",
+          },
+          {
+            name: "RDL Kettlebell sur step",
+            volume: "3 × 8",
+            rir: "RIR 2",
+            execution: "Descends sous le niveau du step — dos neutre absolu",
+            why: "Amplitude augmentée, renforce là où tu compenses",
+            material: "Kettlebell léger + marche d'escalier",
+            video: "https://www.youtube.com/results?search_query=romanian+deadlift+deficit+amplitude+tutorial",
+          },
+          {
+            name: "Curl ischio élastique debout",
+            volume: "2 × 12 / jambe",
+            rir: "RIR 2",
+            execution: "Contrôle concentrique ET excentrique, lent",
+            why: "Ischio dans la course courte, complète le Nordic Curl",
+            material: "Élastique bas",
+            video: "https://www.youtube.com/results?search_query=standing+leg+curl+elastique+ischio",
+          },
+        ],
+      },
+      {
+        title: "Hanches & Fessiers",
+        desc: "Prévenir la compression sciatique en renforçant tout autour",
+        color: COLORS.purple,
+        exercises: [
+          {
+            name: "Clamshell élastique",
+            volume: "3 × 15 / côté",
+            rir: "RIR 2",
+            execution: "Hanches pliées 45°, pied fixé, rotation externe",
+            why: "Moyen fessier + piriforme — clé anti-sciatique",
+            material: "Élastique aux genoux",
+            video: "https://www.youtube.com/results?search_query=clamshell+elastique+fessier+tutorial",
+          },
+          {
+            name: "Hip Thrust Kettlebell amplitude max",
+            volume: "3 × 10",
+            rir: "RIR 2",
+            execution: "Descends bas, remonte SANS hyperlordose en haut",
+            why: "Fessier en amplitude complète, corrige ton défaut de technique",
+            material: "Kettlebell sur bassin",
+            video: "https://www.youtube.com/results?search_query=hip+thrust+kettlebell+tutorial+amplitude",
+          },
+          {
+            name: "Fente basse tenue (stretch actif)",
+            volume: "2 × 30s / côté",
+            rir: "—",
+            execution: "Genou arrière au sol, bassin bas et avancé",
+            why: "Psoas + fessier opposé — libère la compression lombaire",
+            material: "Aucun",
+            video: "https://www.youtube.com/results?search_query=fente+basse+etirement+psoas+tutorial",
+          },
+          {
+            name: "Abduction élastique debout",
+            volume: "3 × 12 / côté",
+            rir: "RIR 2",
+            execution: "Jambe tendue, mouvement lent et contrôlé",
+            why: "Moyen fessier debout, stabilité du bassin",
+            material: "Élastique aux chevilles",
+            video: "https://www.youtube.com/results?search_query=abduction+elastique+debout+fessier+tutorial",
+          },
+        ],
+      },
+    ],
+  },
+  partC: {
+    id: "C",
+    label: "PARTIE C",
+    title: "Étirements Ischios Post-Séance",
+    subtitle: "3 min · Après chaque séance de muscu — sans exception",
+    color: COLORS.orange,
+    icon: "🟠",
+    tip: "La technique PNF (contracter puis relâcher) est la plus efficace pour gagner en souplesse rapidement. En 4 semaines régulières, ton RDL va changer radicalement.",
+    exercises: [
+      {
+        name: "Ischio allongé élastique (PNF)",
+        volume: "2 × 30s / jambe",
+        execution: "Tire la jambe vers toi → pousse 5s contre l'élastique → relâche et tire plus loin",
+        why: "Technique PNF — la plus efficace pour les ischios raides",
+        video: "https://www.youtube.com/results?search_query=PNF+etirement+ischio+elastique+tutorial",
+      },
+      {
+        name: "Étirement debout appui talon",
+        volume: "2 × 30s / jambe",
+        execution: "Talon sur surface ~50cm, penche doucement sans arrondir le dos",
+        why: "Étirement actif en position debout, facile à faire après la séance",
+        video: "https://www.youtube.com/results?search_query=etirement+ischio+debout+talon+tutorial",
+      },
+      {
+        name: "Posture chien tête en bas",
+        volume: "1 × 45s",
+        execution: "Pousse les talons vers le sol, alterne la flexion des genoux lentement",
+        why: "Détend toute la chaîne postérieure : mollets + ischios + dos",
+        video: "https://www.youtube.com/results?search_query=downward+dog+tutorial+ischio+souplesse",
+      },
+    ],
+  },
+  planning: [
+    { day: "Lun", type: "Muscu", detail: "A → Séance → C", color: COLORS.blue },
+    { day: "Mar", type: "Récup", detail: "A seule (10 min)", color: COLORS.muted },
+    { day: "Mer", type: "Muscu", detail: "A → Séance → C", color: COLORS.blue },
+    { day: "Jeu", type: "Récup", detail: "A si raideurs", color: COLORS.muted },
+    { day: "Ven", type: "Muscu", detail: "A → Séance → B + C", color: COLORS.green },
+    { day: "Sam", type: "Option", detail: "B + C", color: COLORS.orange },
+    { day: "Dim", type: "Repos", detail: "Repos complet", color: COLORS.accent },
+  ],
+  corrections: [
+    {
+      exo: "Romanian Deadlift",
+      problem: "Ischios raides → arrondissement lombaire en bas du mouvement",
+      fix: "Stop dès que le dos commence à arrondir, même si c'est juste sous les genoux. Augmente l'amplitude progressivement en parallèle des étirements PNF. La profondeur est secondaire — la position neutre est primaire.",
+      icon: "🏋️",
+    },
+    {
+      exo: "Hip Thrust",
+      problem: "Hyperlordose en position haute = compression lombaire",
+      fix: "En haut : bassin neutre, contracte les fessiers sans creuser le bas du dos. Test : peux-tu mettre ta main à plat entre ton dos et le banc en position haute ? Si oui → trop cambré.",
+      icon: "🍑",
+    },
+    {
+      exo: "Squat",
+      problem: "Hanches raides → 'butt wink' (bascule du bassin) en profondeur",
+      fix: "Travaille le 90/90 et le World's Greatest Stretch 4 semaines. Réévalue ensuite ta profondeur. Ne force pas la profondeur avant d'avoir la mobilité.",
+      icon: "🦵",
+    },
+  ],
+};
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function ExerciseCard({ ex, color, showRir = false }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      onClick={() => setOpen(!open)}
+      style={{
+        background: COLORS.card,
+        border: `1px solid ${open ? color : COLORS.cardBorder}`,
+        borderLeft: `3px solid ${color}`,
+        borderRadius: 10,
+        padding: "12px 16px",
+        cursor: "pointer",
+        transition: "all 0.2s",
+        marginBottom: 8,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ color: COLORS.text, fontWeight: 600, fontSize: 14 }}>{ex.name}</span>
+          {showRir && ex.rir && ex.rir !== "—" && (
+            <span style={{
+              background: `${color}22`,
+              color: color,
+              borderRadius: 4,
+              padding: "1px 7px",
+              fontSize: 11,
+              fontFamily: "monospace",
+              fontWeight: 700,
+            }}>{ex.rir}</span>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: COLORS.muted, fontSize: 12 }}>{ex.volume}</span>
+          <span style={{ color: COLORS.muted, fontSize: 16, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }}>▾</span>
+        </div>
+      </div>
+
+      {open && (
+        <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={{ background: COLORS.bg, borderRadius: 8, padding: "8px 12px" }}>
+              <div style={{ color: COLORS.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Exécution</div>
+              <div style={{ color: COLORS.text, fontSize: 13 }}>{ex.execution}</div>
+            </div>
+            <div style={{ background: COLORS.bg, borderRadius: 8, padding: "8px 12px" }}>
+              <div style={{ color: COLORS.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Pourquoi</div>
+              <div style={{ color: COLORS.text, fontSize: 13 }}>{ex.why}</div>
+            </div>
+          </div>
+          {ex.material && (
+            <div style={{ background: COLORS.bg, borderRadius: 8, padding: "8px 12px" }}>
+              <span style={{ color: COLORS.muted, fontSize: 11 }}>🎽 Matériel : </span>
+              <span style={{ color: COLORS.text, fontSize: 13 }}>{ex.material}</span>
+            </div>
+          )}
+          <a
+            href={ex.video}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#ff000022",
+              color: "#ff4444",
+              border: "1px solid #ff000033",
+              borderRadius: 8,
+              padding: "7px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: "none",
+              width: "fit-content",
+              transition: "background 0.15s",
+            }}
+          >
+            ▶ Voir la vidéo YouTube
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TipBox({ text, color = COLORS.blue }) {
+  return (
+    <div style={{
+      background: `${color}11`,
+      border: `1px solid ${color}33`,
+      borderLeft: `3px solid ${color}`,
+      borderRadius: 8,
+      padding: "10px 14px",
+      color: COLORS.text,
+      fontSize: 13,
+      marginBottom: 16,
+      lineHeight: 1.6,
+    }}>
+      💡 {text}
+    </div>
+  );
+}
+
+function SectionHeader({ label, title, subtitle, color, icon }) {
+  return (
+    <div style={{
+      background: `linear-gradient(135deg, ${color}22 0%, ${COLORS.card} 100%)`,
+      border: `1px solid ${color}44`,
+      borderRadius: 12,
+      padding: "16px 20px",
+      marginBottom: 16,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <span style={{
+          background: color,
+          color: "#fff",
+          borderRadius: 6,
+          padding: "2px 10px",
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: 1.5,
+          textTransform: "uppercase",
+        }}>{label}</span>
+      </div>
+      <div style={{ color: COLORS.text, fontSize: 20, fontWeight: 700, marginBottom: 2 }}>{icon} {title}</div>
+      <div style={{ color: COLORS.muted, fontSize: 13 }}>{subtitle}</div>
+    </div>
+  );
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+
+function TabPartA() {
+  const d = data.partA;
+  return (
+    <div>
+      <SectionHeader {...d} />
+      <TipBox text={d.tip} color={d.color} />
+      {d.exercises.map((ex, i) => (
+        <ExerciseCard key={i} ex={ex} color={d.color} />
+      ))}
+    </div>
+  );
+}
+
+function TabPartB() {
+  const d = data.partB;
+  return (
+    <div>
+      <SectionHeader {...d} />
+      <TipBox text={d.tip} color={d.color} />
+      {d.sections.map((sec, si) => (
+        <div key={si} style={{ marginBottom: 24 }}>
+          <div style={{
+            borderLeft: `3px solid ${sec.color}`,
+            paddingLeft: 12,
+            marginBottom: 10,
+          }}>
+            <div style={{ color: sec.color, fontWeight: 700, fontSize: 14 }}>{sec.title}</div>
+            <div style={{ color: COLORS.muted, fontSize: 12 }}>{sec.desc}</div>
+          </div>
+          {sec.exercises.map((ex, i) => (
+            <ExerciseCard key={i} ex={ex} color={sec.color} showRir />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TabPartC() {
+  const d = data.partC;
+  return (
+    <div>
+      <SectionHeader {...d} />
+      <TipBox text={d.tip} color={d.color} />
+      {d.exercises.map((ex, i) => (
+        <ExerciseCard key={i} ex={ex} color={d.color} />
+      ))}
+    </div>
+  );
+}
+
+function TabPlanning() {
+  return (
+    <div>
+      <div style={{
+        background: `linear-gradient(135deg, ${COLORS.accent}22 0%, ${COLORS.card} 100%)`,
+        border: `1px solid ${COLORS.accent}44`,
+        borderRadius: 12,
+        padding: "16px 20px",
+        marginBottom: 20,
+      }}>
+        <div style={{ color: COLORS.text, fontSize: 20, fontWeight: 700, marginBottom: 2 }}>📅 Planning Semaine Type</div>
+        <div style={{ color: COLORS.muted, fontSize: 13 }}>Adapte selon tes jours de muscu</div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+        {data.planning.map((d, i) => (
+          <div key={i} style={{
+            background: COLORS.card,
+            border: `1px solid ${COLORS.cardBorder}`,
+            borderLeft: `3px solid ${d.color}`,
+            borderRadius: 10,
+            padding: "12px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+          }}>
+            <div style={{
+              width: 36, height: 36,
+              background: `${d.color}22`,
+              borderRadius: 8,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: d.color, fontWeight: 700, fontSize: 13,
+              flexShrink: 0,
+            }}>{d.day}</div>
+            <div>
+              <div style={{ color: COLORS.text, fontWeight: 600, fontSize: 14 }}>{d.type}</div>
+              <div style={{ color: COLORS.muted, fontSize: 12 }}>{d.detail}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ color: COLORS.text, fontWeight: 700, fontSize: 15, marginBottom: 12 }}>🔧 Corrections pour tes exercices phares</div>
+      {data.corrections.map((c, i) => (
+        <div key={i} style={{
+          background: COLORS.card,
+          border: `1px solid ${COLORS.cardBorder}`,
+          borderRadius: 10,
+          padding: "14px 16px",
+          marginBottom: 10,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <span style={{ fontSize: 18 }}>{c.icon}</span>
+            <span style={{ color: COLORS.text, fontWeight: 700, fontSize: 15 }}>{c.exo}</span>
+          </div>
+          <div style={{
+            background: "#e9456022",
+            borderRadius: 6,
+            padding: "6px 10px",
+            color: COLORS.accent,
+            fontSize: 12,
+            marginBottom: 8,
+          }}>⚠️ {c.problem}</div>
+          <div style={{ color: COLORS.text, fontSize: 13, lineHeight: 1.6 }}>✅ {c.fix}</div>
+        </div>
+      ))}
+
+      <div style={{
+        background: COLORS.card,
+        border: `1px solid ${COLORS.cardBorder}`,
+        borderRadius: 10,
+        padding: "14px 16px",
+        marginTop: 8,
+      }}>
+        <div style={{ color: COLORS.text, fontWeight: 700, fontSize: 14, marginBottom: 10 }}>🛒 Matériel recommandé</div>
+        {[
+          { status: "✅", item: "Élastiques (bandes)", price: "Déjà", note: "Utilisés dans 60% des exercices" },
+          { status: "✅", item: "Kettlebells", price: "Déjà", note: "RDL amplitude, Hip Thrust" },
+          { status: "🟡", item: "Foam Roller", price: "~20€", note: "Relâcher les lombaires avant les étirements" },
+          { status: "🟡", item: "Bande résistance forte", price: "~15€", note: "Pour le Nordic Curl" },
+          { status: "🟡", item: "Step / Marche", price: "0€", note: "N'importe quelle marche d'escalier" },
+        ].map((m, i) => (
+          <div key={i} style={{
+            display: "flex", alignItems: "center", gap: 10,
+            padding: "7px 0",
+            borderBottom: i < 4 ? `1px solid ${COLORS.cardBorder}` : "none",
+          }}>
+            <span style={{ fontSize: 16 }}>{m.status}</span>
+            <div style={{ flex: 1 }}>
+              <span style={{ color: COLORS.text, fontSize: 13, fontWeight: 600 }}>{m.item}</span>
+              <span style={{ color: COLORS.muted, fontSize: 12 }}> — {m.note}</span>
+            </div>
+            <span style={{ color: COLORS.muted, fontSize: 12, fontFamily: "monospace" }}>{m.price}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: "A", label: "Mobilité", icon: "🔵", color: COLORS.blue },
+  { id: "B", label: "Renforcement", icon: "🟢", color: COLORS.green },
+  { id: "C", label: "Étirements", icon: "🟠", color: COLORS.orange },
+  { id: "plan", label: "Planning", icon: "📅", color: COLORS.accent },
+];
+
+export default function App() {
+  const [tab, setTab] = useState("A");
+
+  return (
+    <div style={{
+      background: COLORS.bg,
+      minHeight: "100vh",
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      color: COLORS.text,
+    }}>
+      {/* Header */}
+      <div style={{
+        background: `linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)`,
+        borderBottom: `1px solid ${COLORS.cardBorder}`,
+        padding: "20px 20px 0",
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ marginBottom: 4 }}>
+            <span style={{
+              background: COLORS.accent,
+              color: "#fff",
+              borderRadius: 4,
+              padding: "2px 8px",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+            }}>PROGRAMME</span>
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5, marginBottom: 2 }}>
+            Mobilité & Renforcement
+          </div>
+          <div style={{ color: COLORS.muted, fontSize: 12, marginBottom: 16 }}>
+            Protection lombaire · Antécédent sciatique · 15–20 min / session
+          </div>
+
+          {/* Tabs */}
+          <div style={{ display: "flex", gap: 4 }}>
+            {TABS.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                style={{
+                  background: tab === t.id ? `${t.color}22` : "transparent",
+                  border: "none",
+                  borderBottom: tab === t.id ? `2px solid ${t.color}` : "2px solid transparent",
+                  color: tab === t.id ? t.color : COLORS.muted,
+                  padding: "8px 14px",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontWeight: tab === t.id ? 700 : 400,
+                  borderRadius: "6px 6px 0 0",
+                  transition: "all 0.15s",
+                  display: "flex", alignItems: "center", gap: 5,
+                }}
+              >
+                <span>{t.icon}</span>
+                <span>{t.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "20px 16px 40px" }}>
+        {tab === "A" && <TabPartA />}
+        {tab === "B" && <TabPartB />}
+        {tab === "C" && <TabPartC />}
+        {tab === "plan" && <TabPlanning />}
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        textAlign: "center",
+        color: COLORS.muted,
+        fontSize: 11,
+        padding: "12px",
+        borderTop: `1px solid ${COLORS.cardBorder}`,
+      }}>
+        Clique sur chaque exercice pour voir les détails et la vidéo
+      </div>
+    </div>
+  );
+}
