@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Programme Mobilité & Renforcement</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #21262d;
+    --accent: #e94560;
+    --blue: #2980b9;
+    --green: #27ae60;
+    --orange: #e67e22;
+    --purple: #8b5cf6;
+    --text: #e6edf3;
+    --muted: #8b949e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 16px 0;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .header-inner { max-width: 680px; margin: 0 auto; }
+  .badge {
+    background: var(--accent); color: #fff;
+    border-radius: 4px; padding: 2px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; display: inline-block; margin-bottom: 4px;
+  }
+  .header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 2px; }
+  .header p { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 2px; }
+  .tab {
+    background: transparent; border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted); padding: 8px 12px;
+    cursor: pointer; font-size: 13px; font-weight: 400;
+    border-radius: 6px 6px 0 0; transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .tab.active { font-weight: 700; }
+  .tab[data-color="blue"].active  { color: var(--blue);   background: #2980b922; border-bottom-color: var(--blue); }
+  .tab[data-color="green"].active { color: var(--green);  background: #27ae6022; border-bottom-color: var(--green); }
+  .tab[data-color="orange"].active{ color: var(--orange); background: #e67e2222; border-bottom-color: var(--orange); }
+  .tab[data-color="accent"].active{ color: var(--accent); background: #e9456022; border-bottom-color: var(--accent); }
+
+  /* CONTENT */
+  .content { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 16px;
+  }
+  .section-header .part-badge {
+    display: inline-block; color: #fff;
+    border-radius: 6px; padding: 2px 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .section-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+  .section-header p { color: var(--muted); font-size: 13px; }
+
+  /* TIP BOX */
+  .tip-box {
+    border-left: 3px solid;
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; margin-bottom: 16px; line-height: 1.6;
+  }
+
+  /* EXERCISE CARD */
+  .ex-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+    cursor: pointer; margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  .ex-card:hover { border-color: var(--muted); }
+  .ex-card.open { }
+  .ex-header { display: flex; justify-content: space-between; align-items: center; }
+  .ex-left { display: flex; align-items: center; gap: 10px; }
+  .ex-name { font-weight: 600; font-size: 14px; }
+  .rir-badge {
+    border-radius: 4px; padding: 1px 7px;
+    font-size: 11px; font-family: monospace; font-weight: 700;
+  }
+  .ex-right { display: flex; align-items: center; gap: 8px; }
+  .ex-vol { color: var(--muted); font-size: 12px; }
+  .chevron { color: var(--muted); font-size: 16px; transition: transform 0.2s; display: inline-block; }
+  .ex-card.open .chevron { transform: rotate(180deg); }
+
+  .ex-details { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .ex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .info-box { background: var(--bg); border-radius: 8px; padding: 8px 12px; }
+  .info-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+  .info-val { color: var(--text); font-size: 13px; }
+  .mat-box { background: var(--bg); border-radius: 8px; padding: 8px 12px; }
+  .mat-box span:first-child { color: var(--muted); font-size: 11px; }
+  .mat-box span:last-child { color: var(--text); font-size: 13px; }
+
+  .video-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ff000022; color: #ff4444;
+    border: 1px solid #ff000033; border-radius: 8px;
+    padding: 7px 14px; font-size: 12px; font-weight: 600;
+    text-decoration: none; transition: background 0.15s;
+  }
+  .video-btn:hover { background: #ff000033; }
+
+  /* SUBSECTION */
+  .subsection { margin-bottom: 24px; }
+  .subsection-title {
+    border-left: 3px solid; padding-left: 12px; margin-bottom: 10px;
+  }
+  .subsection-title h3 { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+  .subsection-title p { color: var(--muted); font-size: 12px; }
+
+  /* PLANNING */
+  .day-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+  }
+  .day-badge {
+    width: 36px; height: 36px;
+    border-radius: 8px; display: flex;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .day-type { font-weight: 600; font-size: 14px; }
+  .day-detail { color: var(--muted); font-size: 12px; }
+
+  /* CORRECTIONS */
+  .corr-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .corr-title { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .corr-title span { font-size: 18px; }
+  .corr-title h4 { font-weight: 700; font-size: 15px; }
+  .problem-box {
+    background: #e9456022; border-radius: 6px;
+    padding: 6px 10px; color: var(--accent);
+    font-size: 12px; margin-bottom: 8px;
+  }
+  .fix-box { color: var(--text); font-size: 13px; line-height: 1.6; }
+
+  /* MATERIAL TABLE */
+  .mat-table { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .mat-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; border-bottom: 1px solid var(--border);
+  }
+  .mat-row:last-child { border-bottom: none; }
+  .mat-status { font-size: 16px; flex-shrink: 0; }
+  .mat-info { flex: 1; }
+  .mat-name { font-size: 13px; font-weight: 600; }
+  .mat-note { color: var(--muted); font-size: 12px; }
+  .mat-price { color: var(--muted); font-size: 12px; font-family: monospace; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; color: var(--muted); font-size: 11px;
+    padding: 12px; border-top: 1px solid var(--border);
+    position: fixed; bottom: 0; width: 100%; background: var(--bg);
+  }
+
+  .section-label { font-size: 15px; font-weight: 700; margin: 20px 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <span class="badge">Programme</span>
+    <h1>Mobilité &amp; Renforcement</h1>
+    <p>Protection lombaire · Antécédent sciatique · 15–20 min / session</p>
+    <div class="tabs">
+      <button class="tab active" data-color="blue" data-panel="panelA">🔵 Mobilité</button>
+      <button class="tab" data-color="green" data-panel="panelB">🟢 Renforcement</button>
+      <button class="tab" data-color="orange" data-panel="panelC">🟠 Étirements</button>
+      <button class="tab" data-color="accent" data-panel="panelPlan">📅 Planning</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- PANEL A : MOBILITÉ -->
+  <div class="panel active" id="panelA">
+    <div class="section-header" style="background: linear-gradient(135deg, #2980b922 0%, var(--card) 100%); border: 1px solid #2980b944;">
+      <span class="part-badge" style="background: var(--blue);">PARTIE A</span>
+      <h2>🔵 Mobilité Douce</h2>
+      <p>5–8 min · Avant chaque séance ou le matin</p>
+    </div>
+    <div class="tip-box" style="background: #2980b911; border-color: var(--blue); color: var(--text);">
+      💡 Accessible même sans souplesse. Aucune douleur ne doit apparaître. Le <strong>World's Greatest Stretch</strong> est l'exercice le plus rentable du programme.
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Cat-Cow à 4 pattes</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 10 reps</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Lent, 2s dans chaque position</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Mobilise toute la colonne, débloque les facettes lombaires</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=cat+cow+exercise+tutorial+dos" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Rotation thoracique allongé</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 8 / côté</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Expire en tournant, genoux empilés</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Libère exactement la zone douloureuse côté gauche</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=thoracic+rotation+allonge+dos" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Étirement piriforme allongé</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 30s / côté</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Croix de cheville sur genou, tire vers toi</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Prévient la compression du nerf sciatique</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=etirement+piriforme+sciatique" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Hip 90/90 au sol</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 30s / côté</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Dos droit, ne te penche pas en avant</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Ouvre les hanches, réduit la tension sur les lombaires</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=hip+90+90+stretch+mobilite+hanches" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Dead Bug lent (mobilité)</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 6 / côté</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Dos collé au sol, expire à chaque extension</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Active le transverse, stabilise avant l'effort</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial+lombaires" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#2980b9">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">World's Greatest Stretch ⭐</span></div>
+        <div class="ex-right"><span class="ex-vol">1 × 5 / côté</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Enchaîne fente + rotation + ouverture de hanche</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Hanches + thoracique + ischios en un seul mouvement</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=world+greatest+stretch+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL B : RENFORCEMENT -->
+  <div class="panel" id="panelB">
+    <div class="section-header" style="background: linear-gradient(135deg, #27ae6022 0%, var(--card) 100%); border: 1px solid #27ae6044;">
+      <span class="part-badge" style="background: var(--green);">PARTIE B</span>
+      <h2>🟢 Renforcement dans les Amplitudes</h2>
+      <p>10–12 min · 2 à 3 fois / semaine</p>
+    </div>
+    <div class="tip-box" style="background: #27ae6011; border-color: var(--green); color: var(--text);">
+      💡 Renforcer les muscles dans les positions où tu es le plus vulnérable. Élastiques et kettlebells suffisent pour tout.
+    </div>
+
+    <!-- Gainage -->
+    <div class="subsection">
+      <div class="subsection-title" style="border-color: var(--green);">
+        <h3 style="color: var(--green);">Gainage Profond</h3>
+        <p>Sans charge, sans risque — le socle de ta protection lombaire</p>
+      </div>
+      <div class="ex-card" data-color="#27ae60">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Dead Bug</span><span class="rir-badge" style="background:#27ae6022;color:#27ae60">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 8 / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Dos collé au sol, expire en allongeant</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Multifides + transverse · Antisciatique n°1</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=dead+bug+exercise+gainage+profond" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#27ae60">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Bird Dog</span><span class="rir-badge" style="background:#27ae6022;color:#27ae60">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 8 / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Lent, hanche neutre, ne laisse pas tomber la hanche</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Coordination lombaire, mimétique du cordiste</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=bird+dog+exercise+dos+lombaires" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#27ae60">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Planche avant-bras</span><span class="rir-badge" style="background:#27ae6022;color:#27ae60">RIR 1-2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 20–30s</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Bassin neutre, respire normalement</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Gainage global sans compression discale</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=planche+avant+bras+tutorial+form" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#27ae60">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Planche latérale genoux</span><span class="rir-badge" style="background:#27ae6022;color:#27ae60">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">2 × 20s / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Hanche vers le plafond, corps aligné</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Carré des lombes — la zone qui a lâché chez toi</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=planche+laterale+genou+carre+des+lombes" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ischios -->
+    <div class="subsection">
+      <div class="subsection-title" style="border-color: var(--orange);">
+        <h3 style="color: var(--orange);">Ischio-jambiers en Amplitude</h3>
+        <p>Tes ischios raides tirent sur ton bas du dos au RDL — voilà la solution</p>
+      </div>
+      <div class="ex-card" data-color="#e67e22">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Nordic Curl élastique</span><span class="rir-badge" style="background:#e67e2222;color:#e67e22">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 5–8</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Descente lente 4s, élastique aide au retour</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Renforce les ischios dans la position la plus vulnérable</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Élastique fixé haut (porte, rack)</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=nordic+curl+elastique+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#e67e22">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Pont fessier 1 jambe</span><span class="rir-badge" style="background:#e67e2222;color:#e67e22">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 10 / jambe</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Descente lente 3s, hanche haute en position haute</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Ischio + fessier en amplitude, sans charge lombaire</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=single+leg+glute+bridge+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#e67e22">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">RDL Kettlebell sur step</span><span class="rir-badge" style="background:#e67e2222;color:#e67e22">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 8</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Descends sous le niveau du step — dos neutre absolu</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Amplitude augmentée, renforce là où tu compenses</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Kettlebell léger + marche d'escalier</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=romanian+deadlift+deficit+amplitude+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#e67e22">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Curl ischio élastique debout</span><span class="rir-badge" style="background:#e67e2222;color:#e67e22">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">2 × 12 / jambe</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Contrôle concentrique ET excentrique, lent</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Ischio en course courte, complète le Nordic Curl</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Élastique bas</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=standing+leg+curl+elastique+ischio" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hanches -->
+    <div class="subsection">
+      <div class="subsection-title" style="border-color: var(--purple);">
+        <h3 style="color: var(--purple);">Hanches &amp; Fessiers</h3>
+        <p>Prévenir la compression sciatique en renforçant tout autour</p>
+      </div>
+      <div class="ex-card" data-color="#8b5cf6">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Clamshell élastique</span><span class="rir-badge" style="background:#8b5cf622;color:#8b5cf6">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 15 / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Hanches pliées 45°, pied fixé, rotation externe</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Moyen fessier + piriforme — clé anti-sciatique</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Élastique aux genoux</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=clamshell+elastique+fessier+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#8b5cf6">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Hip Thrust KB amplitude max</span><span class="rir-badge" style="background:#8b5cf622;color:#8b5cf6">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 10</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Descends bas, remonte SANS hyperlordose en haut</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Fessier en amplitude complète, corrige le défaut de technique</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Kettlebell sur bassin</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=hip+thrust+kettlebell+tutorial+amplitude" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#8b5cf6">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Fente basse tenue (stretch actif)</span></div>
+          <div class="ex-right"><span class="ex-vol">2 × 30s / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Genou arrière au sol, bassin bas et avancé</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Psoas + fessier opposé — libère la compression lombaire</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Aucun</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=fente+basse+etirement+psoas+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+      <div class="ex-card" data-color="#8b5cf6">
+        <div class="ex-header">
+          <div class="ex-left"><span class="ex-name">Abduction élastique debout</span><span class="rir-badge" style="background:#8b5cf622;color:#8b5cf6">RIR 2</span></div>
+          <div class="ex-right"><span class="ex-vol">3 × 12 / côté</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="ex-details" style="display:none">
+          <div class="ex-grid">
+            <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Jambe tendue, mouvement lent et contrôlé</div></div>
+            <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Moyen fessier debout, stabilité du bassin</div></div>
+          </div>
+          <div class="mat-box"><span>🎽 Matériel : </span><span>Élastique aux chevilles</span></div>
+          <a class="video-btn" href="https://www.youtube.com/results?search_query=abduction+elastique+debout+fessier+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL C : ÉTIREMENTS -->
+  <div class="panel" id="panelC">
+    <div class="section-header" style="background: linear-gradient(135deg, #e67e2222 0%, var(--card) 100%); border: 1px solid #e67e2244;">
+      <span class="part-badge" style="background: var(--orange);">PARTIE C</span>
+      <h2>🟠 Étirements Ischios Post-Séance</h2>
+      <p>3 min · Après chaque séance de muscu — sans exception</p>
+    </div>
+    <div class="tip-box" style="background: #e67e2211; border-color: var(--orange); color: var(--text);">
+      💡 La technique <strong>PNF</strong> (contracter puis relâcher) est la plus efficace pour gagner en souplesse rapidement. En 4 semaines régulières, ton RDL va changer radicalement.
+    </div>
+
+    <div class="ex-card" data-color="#e67e22">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Ischio allongé élastique (PNF) ⭐</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 30s / jambe</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Tire la jambe → pousse 5s contre l'élastique → relâche et tire plus loin</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Technique PNF — la plus efficace pour les ischios raides</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=PNF+etirement+ischio+elastique+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#e67e22">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Étirement debout appui talon</span></div>
+        <div class="ex-right"><span class="ex-vol">2 × 30s / jambe</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Talon sur surface ~50cm, penche doucement sans arrondir le dos</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Étirement actif en position debout, facile à faire après la séance</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=etirement+ischio+debout+talon+tutorial" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+
+    <div class="ex-card" data-color="#e67e22">
+      <div class="ex-header">
+        <div class="ex-left"><span class="ex-name">Posture chien tête en bas</span></div>
+        <div class="ex-right"><span class="ex-vol">1 × 45s</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="ex-details" style="display:none">
+        <div class="ex-grid">
+          <div class="info-box"><div class="info-label">Exécution</div><div class="info-val">Pousse les talons vers le sol, alterne la flexion des genoux</div></div>
+          <div class="info-box"><div class="info-label">Pourquoi</div><div class="info-val">Détend toute la chaîne postérieure : mollets + ischios + dos</div></div>
+        </div>
+        <a class="video-btn" href="https://www.youtube.com/results?search_query=downward+dog+tutorial+ischio+souplesse" target="_blank">▶ Voir la vidéo YouTube</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL PLANNING -->
+  <div class="panel" id="panelPlan">
+    <div class="section-header" style="background: linear-gradient(135deg, #e9456022 0%, var(--card) 100%); border: 1px solid #e9456044;">
+      <h2>📅 Planning Semaine Type</h2>
+      <p>Adapte selon tes jours de muscu</p>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div class="day-card" style="border-left-color: var(--blue);">
+        <div class="day-badge" style="background:#2980b922;color:var(--blue)">Lun</div>
+        <div><div class="day-type">Muscu</div><div class="day-detail">A → Séance → C</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--muted);">
+        <div class="day-badge" style="background:#8b949e22;color:var(--muted)">Mar</div>
+        <div><div class="day-type">Récup</div><div class="day-detail">A seule (10 min)</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--blue);">
+        <div class="day-badge" style="background:#2980b922;color:var(--blue)">Mer</div>
+        <div><div class="day-type">Muscu</div><div class="day-detail">A → Séance → C</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--muted);">
+        <div class="day-badge" style="background:#8b949e22;color:var(--muted)">Jeu</div>
+        <div><div class="day-type">Récup</div><div class="day-detail">A si raideurs</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--green);">
+        <div class="day-badge" style="background:#27ae6022;color:var(--green)">Ven</div>
+        <div><div class="day-type">Muscu</div><div class="day-detail">A → Séance → B + C</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--orange);">
+        <div class="day-badge" style="background:#e67e2222;color:var(--orange)">Sam</div>
+        <div><div class="day-type">Optionnel</div><div class="day-detail">B + C</div></div>
+      </div>
+      <div class="day-card" style="border-left-color: var(--accent);">
+        <div class="day-badge" style="background:#e9456022;color:var(--accent)">Dim</div>
+        <div><div class="day-type">Repos</div><div class="day-detail">Repos complet</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">🔧 Corrections pour tes exercices phares</div>
+    <div class="corr-card">
+      <div class="corr-title"><span>🏋️</span><h4>Romanian Deadlift</h4></div>
+      <div class="problem-box">⚠️ Ischios raides → arrondissement lombaire en bas du mouvement</div>
+      <div class="fix-box">✅ Stop dès que le dos commence à arrondir, même si c'est juste sous les genoux. Augmente l'amplitude progressivement en parallèle des étirements PNF. La profondeur est secondaire — la position neutre est primaire.</div>
+    </div>
+    <div class="corr-card">
+      <div class="corr-title"><span>🍑</span><h4>Hip Thrust</h4></div>
+      <div class="problem-box">⚠️ Hyperlordose en position haute = compression lombaire</div>
+      <div class="fix-box">✅ En haut : bassin neutre, contracte les fessiers sans creuser le bas du dos. Test : peux-tu mettre ta main à plat entre ton dos et le banc ? Si oui → trop cambré.</div>
+    </div>
+    <div class="corr-card">
+      <div class="corr-title"><span>🦵</span><h4>Squat</h4></div>
+      <div class="problem-box">⚠️ Hanches raides → bascule du bassin en profondeur</div>
+      <div class="fix-box">✅ Travaille le 90/90 et le World's Greatest Stretch 4 semaines. Ne force pas la profondeur avant d'avoir la mobilité.</div>
+    </div>
+
+    <div class="section-label">🛒 Matériel</div>
+    <div class="mat-table">
+      <div class="mat-row"><span class="mat-status">✅</span><div class="mat-info"><div class="mat-name">Élastiques (bandes)</div><div class="mat-note">Utilisés dans 60% des exercices</div></div><span class="mat-price">Déjà</span></div>
+      <div class="mat-row"><span class="mat-status">✅</span><div class="mat-info"><div class="mat-name">Kettlebells</div><div class="mat-note">RDL amplitude, Hip Thrust</div></div><span class="mat-price">Déjà</span></div>
+      <div class="mat-row"><span class="mat-status">🟡</span><div class="mat-info"><div class="mat-name">Foam Roller</div><div class="mat-note">Relâcher lombaires avant étirements</div></div><span class="mat-price">~20€</span></div>
+      <div class="mat-row"><span class="mat-status">🟡</span><div class="mat-info"><div class="mat-name">Bande résistance forte</div><div class="mat-note">Pour le Nordic Curl</div></div><span class="mat-price">~15€</span></div>
+      <div class="mat-row"><span class="mat-status">🟡</span><div class="mat-info"><div class="mat-name">Step / Marche d'escalier</div><div class="mat-note">RDL en amplitude</div></div><span class="mat-price">0€</span></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Clique sur chaque exercice pour les détails et la vidéo</footer>
+
+<script>
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+      window.scrollTo(0, 0);
+    });
+  });
+
+  // Exercise cards toggle
+  document.querySelectorAll('.ex-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.tagName === 'A') return;
+      const details = card.querySelector('.ex-details');
+      const isOpen = details.style.display !== 'none';
+      details.style.display = isOpen ? 'none' : 'flex';
+      card.classList.toggle('open', !isOpen);
+      const color = card.dataset.color;
+      card.style.borderColor = isOpen ? 'var(--border)' : color;
+      card.style.borderLeftColor = color;
+    });
+  });
+
+  // Set border-left color on all ex-cards
+  document.querySelectorAll('.ex-card').forEach(card => {
+    card.style.borderLeft = `3px solid ${card.dataset.color}`;
+  });
+</script>
+</body>
+</html>
